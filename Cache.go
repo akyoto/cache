@@ -11,8 +11,8 @@ type Cache struct {
 	close chan struct{}
 }
 
-// Item stores arbitrary data with expiration time.
-type Item struct {
+// An item represents arbitrary data with expiration time.
+type item struct {
 	data    interface{}
 	expires int64
 }
@@ -34,7 +34,7 @@ func New(cleaningInterval time.Duration) *Cache {
 				now := time.Now().UnixNano()
 
 				cache.items.Range(func(key, value interface{}) bool {
-					item := value.(Item)
+					item := value.(item)
 
 					if item.expires < now {
 						cache.items.Delete(key)
@@ -60,7 +60,7 @@ func (cache *Cache) Get(key interface{}) (interface{}, bool) {
 		return nil, false
 	}
 
-	item := obj.(Item)
+	item := obj.(item)
 
 	if item.expires > 0 && time.Now().UnixNano() > item.expires {
 		return nil, false
@@ -78,7 +78,7 @@ func (cache *Cache) Set(key interface{}, value interface{}, duration time.Durati
 		expires = time.Now().Add(duration).UnixNano()
 	}
 
-	cache.items.Store(key, Item{
+	cache.items.Store(key, item{
 		data:    value,
 		expires: expires,
 	})
