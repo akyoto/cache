@@ -2,7 +2,10 @@
 
 {go:header}
 
-* Cache arbitrary data with an expiration time
+Cache arbitrary data with an expiration time.
+
+## Features
+
 * 0 dependencies
 * Less than 100 lines of code
 * 100% test coverage
