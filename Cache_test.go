@@ -8,10 +8,11 @@ import (
 )
 
 func Test(t *testing.T) {
-	c := cache.New(20 * time.Millisecond)
+	cycle := 20 * time.Millisecond
+	c := cache.New(cycle)
 	defer c.Close()
 
-	c.Set("Hello", "World", 10*time.Millisecond)
+	c.Set("Hello", "World", cycle/2)
 	hello, found := c.Get("Hello")
 
 	if !found {
@@ -22,7 +23,7 @@ func Test(t *testing.T) {
 		t.FailNow()
 	}
 
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(cycle / 2)
 
 	_, found = c.Get("Hello")
 
@@ -30,11 +31,50 @@ func Test(t *testing.T) {
 		t.FailNow()
 	}
 
-	time.Sleep(20 * time.Millisecond)
+	time.Sleep(cycle)
 
 	_, found = c.Get("404")
 
 	if found {
 		t.FailNow()
 	}
+}
+
+func BenchmarkNew(b *testing.B) {
+	b.ReportAllocs()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			cache.New(5 * time.Second).Close()
+		}
+	})
+}
+
+func BenchmarkGet(b *testing.B) {
+	c := cache.New(5 * time.Second)
+	defer c.Close()
+	c.Set("Hello", "World", 0)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			c.Get("Hello")
+		}
+	})
+}
+
+func BenchmarkSet(b *testing.B) {
+	c := cache.New(5 * time.Second)
+	defer c.Close()
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			c.Set("Hello", "World", 0)
+		}
+	})
 }

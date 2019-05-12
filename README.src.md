@@ -23,4 +23,12 @@ obj, found := c.Get("a")
 fmt.Println(obj.(string))
 ```
 
+## Benchmarks
+
+```text
+BenchmarkGet-12         300000000                3.88 ns/op            0 B/op          0 allocs/op
+BenchmarkSet-12         10000000               183 ns/op              48 B/op          2 allocs/op
+BenchmarkNew-12         10000000               112 ns/op             352 B/op          5 allocs/op
+```
+
 {go:footer}

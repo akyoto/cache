@@ -6,10 +6,7 @@
 [![Coverage][coverage-image]][coverage-url]
 [![Patreon][patreon-image]][patreon-url]
 
-Cache arbitrary data with an expiration time.
-
-## Features
-
+* Cache arbitrary data with an expiration time
 * 0 dependencies
 * Less than 100 lines of code
 * 100% test coverage
@@ -28,6 +25,14 @@ obj, found := c.Get("a")
 
 // Convert the type
 fmt.Println(obj.(string))
+```
+
+## Benchmarks
+
+```text
+BenchmarkGet-12         300000000                3.88 ns/op            0 B/op          0 allocs/op
+BenchmarkSet-12         10000000               183 ns/op              48 B/op          2 allocs/op
+BenchmarkNew-12         10000000               112 ns/op             352 B/op          5 allocs/op
 ```
 
 ## Style
