@@ -7,7 +7,7 @@ import (
 	"github.com/akyoto/cache"
 )
 
-func Test(t *testing.T) {
+func TestGetSet(t *testing.T) {
 	cycle := 20 * time.Millisecond
 	c := cache.New(cycle)
 	defer c.Close()
@@ -34,6 +34,25 @@ func Test(t *testing.T) {
 	time.Sleep(cycle)
 
 	_, found = c.Get("404")
+
+	if found {
+		t.FailNow()
+	}
+
+}
+
+func TestDelete(t *testing.T) {
+	c := cache.New(5 * time.Minute)
+	c.Set("Hello", "World", time.Hour)
+	_, found := c.Get("Hello")
+
+	if !found {
+		t.FailNow()
+	}
+
+	c.Delete("Hello")
+
+	_, found = c.Get("Hello")
 
 	if found {
 		t.FailNow()
@@ -75,6 +94,20 @@ func BenchmarkSet(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			c.Set("Hello", "World", 0)
+		}
+	})
+}
+
+func BenchmarkDelete(b *testing.B) {
+	c := cache.New(5 * time.Second)
+	defer c.Close()
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			c.Delete("Hello")
 		}
 	})
 }

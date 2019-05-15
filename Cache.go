@@ -84,6 +84,11 @@ func (cache *Cache) Set(key interface{}, value interface{}, duration time.Durati
 	})
 }
 
+// Delete deletes the key and its value from the cache.
+func (cache *Cache) Delete(key interface{}) {
+	cache.items.Delete(key)
+}
+
 // Close closes the cache and frees up resources.
 func (cache *Cache) Close() {
 	cache.close <- struct{}{}
