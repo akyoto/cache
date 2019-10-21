@@ -59,6 +59,24 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+func TestRange(t *testing.T) {
+	c := cache.New(5 * time.Minute)
+	type user struct {
+		Name string
+	}
+	u := user{
+		Name: "Jon Doe",
+	}
+	c.Set("Hello", &u, time.Hour)
+	c.Range(func(key, value interface{}) bool {
+		value.(*user).Name = "Jane Doe"
+		return true
+	})
+	if u.Name != "Jane Doe" {
+		t.FailNow()
+	}
+}
+
 func BenchmarkNew(b *testing.B) {
 	b.ReportAllocs()
 
