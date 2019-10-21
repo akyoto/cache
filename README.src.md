@@ -7,7 +7,7 @@ Cache arbitrary data with an expiration time.
 ## Features
 
 * 0 dependencies
-* Less than 100 lines of code
+* About 100 lines of code
 * 100% test coverage
 
 ## Usage

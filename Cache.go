@@ -52,23 +52,6 @@ func New(cleaningInterval time.Duration) *Cache {
 	return cache
 }
 
-// Range calls f sequentially for each key and value present in the map.
-// If f returns false, range stops the iteration.
-//
-// Range does not necessarily correspond to any consistent snapshot of the Map's
-// contents: no key will be visited more than once, but if the value for any key
-// is stored or deleted concurrently, Range may reflect any mapping for that key
-// from any point during the Range call.
-//
-// Range may be O(N) with the number of elements in the map even if f returns
-// false after a constant number of calls.
-func (cache *Cache) Range(f func(key, value interface{}) bool) {
-	fn := func(key, value interface{}) bool {
-		return f(key, value.(item).data)
-	}
-	cache.items.Range(fn)
-}
-
 // Get gets the value for the given key.
 func (cache *Cache) Get(key interface{}) (interface{}, bool) {
 	obj, exists := cache.items.Load(key)
@@ -99,6 +82,16 @@ func (cache *Cache) Set(key interface{}, value interface{}, duration time.Durati
 		data:    value,
 		expires: expires,
 	})
+}
+
+// Range calls f sequentially for each key and value present in the cache.
+// If f returns false, range stops the iteration.
+func (cache *Cache) Range(f func(key, value interface{}) bool) {
+	fn := func(key, value interface{}) bool {
+		return f(key, value.(item).data)
+	}
+
+	cache.items.Range(fn)
 }
 
 // Delete deletes the key and its value from the cache.
