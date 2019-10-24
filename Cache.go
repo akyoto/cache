@@ -87,8 +87,16 @@ func (cache *Cache) Set(key interface{}, value interface{}, duration time.Durati
 // Range calls f sequentially for each key and value present in the cache.
 // If f returns false, range stops the iteration.
 func (cache *Cache) Range(f func(key, value interface{}) bool) {
+	now := time.Now().UnixNano()
+
 	fn := func(key, value interface{}) bool {
-		return f(key, value.(item).data)
+		item := value.(item)
+
+		if item.expires > 0 && now > item.expires {
+			return true
+		}
+
+		return f(key, item.data)
 	}
 
 	cache.items.Range(fn)

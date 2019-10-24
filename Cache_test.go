@@ -8,24 +8,24 @@ import (
 )
 
 func TestGetSet(t *testing.T) {
-	cycle := 20 * time.Millisecond
+	cycle := 100 * time.Millisecond
 	c := cache.New(cycle)
 	defer c.Close()
 
-	c.Set("Hello", "World", cycle/2)
-	hello, found := c.Get("Hello")
+	c.Set("hello", "Hello", cycle/2)
+	hello, found := c.Get("hello")
 
 	if !found {
 		t.FailNow()
 	}
 
-	if hello.(string) != "World" {
+	if hello.(string) != "Hello" {
 		t.FailNow()
 	}
 
 	time.Sleep(cycle / 2)
 
-	_, found = c.Get("Hello")
+	_, found = c.Get("hello")
 
 	if found {
 		t.FailNow()
@@ -38,21 +38,20 @@ func TestGetSet(t *testing.T) {
 	if found {
 		t.FailNow()
 	}
-
 }
 
 func TestDelete(t *testing.T) {
-	c := cache.New(5 * time.Minute)
-	c.Set("Hello", "World", time.Hour)
-	_, found := c.Get("Hello")
+	c := cache.New(time.Minute)
+	c.Set("hello", "Hello", time.Hour)
+	_, found := c.Get("hello")
 
 	if !found {
 		t.FailNow()
 	}
 
-	c.Delete("Hello")
+	c.Delete("hello")
 
-	_, found = c.Get("Hello")
+	_, found = c.Get("hello")
 
 	if found {
 		t.FailNow()
@@ -60,26 +59,31 @@ func TestDelete(t *testing.T) {
 }
 
 func TestRange(t *testing.T) {
-	c := cache.New(5 * time.Minute)
-
-	type user struct {
-		Name string
-	}
-
-	u := user{
-		Name: "Jon Doe",
-	}
-
-	c.Set("u", &u, time.Hour)
+	c := cache.New(time.Minute)
+	c.Set("hello", "Hello", time.Hour)
+	c.Set("world", "World", time.Hour)
+	count := 0
 
 	c.Range(func(key, value interface{}) bool {
-		value.(*user).Name = "Jane Doe"
+		count++
 		return true
 	})
 
-	if u.Name != "Jane Doe" {
+	if count != 2 {
 		t.FailNow()
 	}
+}
+
+func TestRangeTimer(t *testing.T) {
+	c := cache.New(time.Minute)
+	c.Set("message", "Hello", time.Nanosecond)
+	c.Set("world", "World", time.Nanosecond)
+	time.Sleep(time.Microsecond)
+
+	c.Range(func(key, value interface{}) bool {
+		t.FailNow()
+		return true
+	})
 }
 
 func BenchmarkNew(b *testing.B) {
