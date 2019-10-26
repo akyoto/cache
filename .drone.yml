@@ -4,13 +4,11 @@ name: default
 steps:
 - name: test
   image: golang
-  environment:
-    GO111MODULE: on
   commands:
   - go version
   - go get ./...
   - go build ./...
-  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.18.0
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.21.0
   - golangci-lint run --enable dupl --enable goconst --enable gocritic --enable misspell --enable prealloc --enable unconvert --enable unparam
   - go test -v -race -coverprofile=coverage.txt ./...
 
