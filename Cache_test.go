@@ -12,6 +12,7 @@ func TestGetSet(t *testing.T) {
 	c := cache.New(cycle)
 	defer c.Close()
 
+	c.Set("sticky", "forever", 0)
 	c.Set("hello", "Hello", cycle/2)
 	hello, found := c.Get("hello")
 
@@ -36,6 +37,11 @@ func TestGetSet(t *testing.T) {
 	_, found = c.Get("404")
 
 	if found {
+		t.FailNow()
+	}
+	
+	_, found = c.Get("sticky")
+	if !found {
 		t.FailNow()
 	}
 }
