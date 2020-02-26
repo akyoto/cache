@@ -36,7 +36,7 @@ func New(cleaningInterval time.Duration) *Cache {
 				cache.items.Range(func(key, value interface{}) bool {
 					item := value.(item)
 
-					if item.expires > 0 && item.expires < now {
+					if item.expires > 0 && now > item.expires {
 						cache.items.Delete(key)
 					}
 

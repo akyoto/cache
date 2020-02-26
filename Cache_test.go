@@ -39,8 +39,9 @@ func TestGetSet(t *testing.T) {
 	if found {
 		t.FailNow()
 	}
-	
+
 	_, found = c.Get("sticky")
+
 	if !found {
 		t.FailNow()
 	}
