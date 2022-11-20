@@ -49,6 +49,7 @@ func TestGetSet(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	c := cache.New(time.Minute)
+	defer c.Close()
 	c.Set("hello", "Hello", time.Hour)
 	_, found := c.Get("hello")
 
@@ -67,6 +68,7 @@ func TestDelete(t *testing.T) {
 
 func TestRange(t *testing.T) {
 	c := cache.New(time.Minute)
+	defer c.Close()
 	c.Set("hello", "Hello", time.Hour)
 	c.Set("world", "World", time.Hour)
 	count := 0
@@ -83,6 +85,7 @@ func TestRange(t *testing.T) {
 
 func TestRangeTimer(t *testing.T) {
 	c := cache.New(time.Minute)
+	defer c.Close()
 	c.Set("message", "Hello", time.Nanosecond)
 	c.Set("world", "World", time.Nanosecond)
 	time.Sleep(time.Microsecond)
